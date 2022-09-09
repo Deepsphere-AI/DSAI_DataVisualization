@@ -88,16 +88,40 @@ describe extended DSAI_product_group_e
 
 -- COMMAND ----------
 
+-- MAGIC %md #Dsai_unit_of_measure
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE dsai_sales_analysis.DSAI_unit_of_measure(
+Unit_Of_Measure STRING NOT NULL,
+Unit_Description STRING NOT NULL,
+Created_User STRING NOT NULL,
+Created_DT STRING NOT NULL,
+Updated_User STRING NOT NULL,
+Updated_DT STRING NOT NULL
+)USING DELTA;
+
+COPY INTO dsai_sales_analysis.dsai_unit_of_measure
+FROM '/FileStore/dsai_sales_analysis/UnitOfMeasurement.csv'
+FILEFORMAT = CSV
+FORMAT_OPTIONS (
+  'HEADER' = 'TRUE'
+)
+COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE');
+
+-- COMMAND ----------
+
 -- MAGIC %md #DSAI_product
 
 -- COMMAND ----------
 
 USE dsai_sales_analysis;
 CREATE OR REPLACE TABLE DSAI_product(
-Product_Family_ID varchar(10),
-Product_Group_ID varchar(10),
-Product_ID varchar(10),
-Product_Name varchar(100),
+Product_Family_ID string Not Null,
+Product_Group_ID string Not Null,
+Product_ID string Not Null,
+Product_Name string Not Null,
+Unit_Of_Measure string Not Null,
 Created_User String Not Null,
 Created_DT string Not Null,
 Updated_User String Not Null,
@@ -110,7 +134,7 @@ FILEFORMAT = CSV
 FORMAT_OPTIONS (
   'HEADER' = 'TRUE'
 )
-COPY_OPTIONS ('FORCE'='TRUE')
+COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE')
 
 -- COMMAND ----------
 
@@ -127,6 +151,7 @@ CREATE OR REPLACE TABLE DSAI_SKU(
 Product_ID Varchar(10) NOT NULL,
 SKU_ID varchar(10) NOT NULL,
 SKU_Description varchar(100) NOT NULL,
+Unit_Of_Measure string Not Null,
 Created_User String Not Null,
 Created_DT string Not Null,
 Updated_User String Not Null,
