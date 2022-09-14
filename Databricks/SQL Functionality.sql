@@ -173,10 +173,6 @@ SELECT * FROM hive_metastore.dsai_sales_analysis.dsai_fact WHERE Product_Family_
 
 -- COMMAND ----------
 
-
-
--- COMMAND ----------
-
 -- MAGIC %md #GroupBy
 -- MAGIC 
 -- MAGIC It is used to group the rows based on a set of specified grouping expressions and calculate aggregations on the group of rows based on one or multiple specified aggregate functions. Also, the Databricks Runtime supports advanced aggregations to do multiple aggregations for the same input record set via GROUPING SETS, CUBE, and ROLLUP clauses. These grouping expressions and advanced aggregations can be mixed in the GROUP BY clause and nested in a GROUPING SETS clause.
@@ -187,6 +183,11 @@ SELECT Product_Family_ID,count(*) FROM hive_metastore.dsai_sales_analysis.dsai_f
 
 -- COMMAND ----------
 
+SELECT Product_Family_ID,count(*) FROM hive_metastore.dsai_sales_analysis.dsai_fact GROUP BY 1
+ORDER BY Product_Family_ID;
+
+-- COMMAND ----------
+
 -- MAGIC %md #Order By
 -- MAGIC The user-specified order where returns the result rows in a sorted manner. Contrary to the SORT BY clause, this clause guarantees total order in the output.
 
@@ -194,6 +195,11 @@ SELECT Product_Family_ID,count(*) FROM hive_metastore.dsai_sales_analysis.dsai_f
 
 SELECT Product_Family_ID,count(*) FROM hive_metastore.dsai_sales_analysis.dsai_fact GROUP BY Product_Family_ID
 ORDER BY Product_Family_ID;
+
+-- COMMAND ----------
+
+SELECT Product_Family_ID,count(*) FROM hive_metastore.dsai_sales_analysis.dsai_fact GROUP BY Product_Family_ID
+ORDER BY 2 ASC;
 
 -- COMMAND ----------
 
@@ -280,6 +286,16 @@ select initcap(Customer_Full_Name) from hive_metastore.dsai_sales_analysis.dsai_
 
 -- COMMAND ----------
 
+-- MAGIC %md ##LENGTH Function
+-- MAGIC Returns the character length of string data or number of bytes of binary data.
+-- MAGIC The length of string data includes the trailing spaces. The length of binary data includes trailing binary zeros.
+
+-- COMMAND ----------
+
+SELECT Customer_Full_Name,LENGTH(Customer_Full_Name)  from hive_metastore.dsai_sales_analysis.dsai_customer;
+
+-- COMMAND ----------
+
 -- MAGIC %md #Date FUNCTIONS
 
 -- COMMAND ----------
@@ -318,7 +334,15 @@ SELECT current_timezone();
 
 -- COMMAND ----------
 
+-- MAGIC %md ##DATE_ADD Function
+
+-- COMMAND ----------
+
 SELECT DATE_ADD(Sales_Date,1) FROM hive_metastore.dsai_sales_analysis.dsai_fact;
+
+-- COMMAND ----------
+
+-- MAGIC %md ##DATE_SUB FUNCTION
 
 -- COMMAND ----------
 
@@ -330,7 +354,15 @@ SELECT Sales_Date,date_sub(Sales_Date,3) FROM hive_metastore.dsai_sales_analysis
 
 -- COMMAND ----------
 
+-- MAGIC %md ##ADD_MONTHS FUNCTION
+
+-- COMMAND ----------
+
 SELECT date(Sales_Date),add_months(date(Sales_Date),2) from hive_metastore.dsai_sales_analysis.dsai_fact limit 1;
+
+-- COMMAND ----------
+
+-- MAGIC %md ##DATEDIFF FUNCTION
 
 -- COMMAND ----------
 
@@ -339,6 +371,10 @@ SELECT date(Sales_Date),datediff(now(),date(Sales_Date)) from hive_metastore.dsa
 -- COMMAND ----------
 
 SELECT date(Sales_Date),datediff('2022-08-02',date(Sales_Date)) from hive_metastore.dsai_sales_analysis.dsai_fact limit 1;
+
+-- COMMAND ----------
+
+-- MAGIC %md ##MONTHS_BETWEEN
 
 -- COMMAND ----------
 
@@ -402,12 +438,40 @@ group by pf.Product_Family_ID,pf.Product_Family_Name;
 
 -- COMMAND ----------
 
--- MAGIC %md ##LEFT JOIN
+-- MAGIC %md ##Outer Join
+
+-- COMMAND ----------
+
+-- MAGIC %md ###LEFT OUTER JOIN
+-- MAGIC The LEFT JOIN also called as LEFT OUTER JOIN returns all records from the left table (table1), and the matching records from the right table (table2).
 
 -- COMMAND ----------
 
 SELECT pf.Product_Family_ID,pf.Product_Family_Name,count(Quantity_Sold) from hive_metastore.dsai_sales_analysis.dsai_product_family pf 
 LEFT JOIN hive_metastore.dsai_sales_analysis.dsai_fact f on (f.Product_Family_ID = pf.Product_Family_ID)
+GROUP BY pf.Product_Family_ID,pf.Product_Family_Name;
+
+-- COMMAND ----------
+
+-- MAGIC %md ###RIGHT OUTER JOIN
+-- MAGIC The RIGHT OUTER JOIN also simply say RIGHT JOIN returns all records from the right table (table2), and the matching records from the left table (table1). 
+
+-- COMMAND ----------
+
+SELECT pf.Product_Family_ID,pf.Product_Family_Name,count(Quantity_Sold) from hive_metastore.dsai_sales_analysis.dsai_product_family pf 
+RIGHT JOIN hive_metastore.dsai_sales_analysis.dsai_fact f on (f.Product_Family_ID = pf.Product_Family_ID)
+GROUP BY pf.Product_Family_ID,pf.Product_Family_Name;
+
+-- COMMAND ----------
+
+-- MAGIC %md ###FULL OUTER JOIN
+-- MAGIC Returns all the rows from the joined tables, whether they are matched or not.
+-- MAGIC Combines the functionality of both LEFT and RIGHT JOIN
+
+-- COMMAND ----------
+
+SELECT pf.Product_Family_ID,pf.Product_Family_Name,count(Quantity_Sold) from hive_metastore.dsai_sales_analysis.dsai_product_family pf 
+FULL JOIN hive_metastore.dsai_sales_analysis.dsai_fact f on (f.Product_Family_ID = pf.Product_Family_ID)
 GROUP BY pf.Product_Family_ID,pf.Product_Family_Name;
 
 -- COMMAND ----------
@@ -501,10 +565,6 @@ SELECT YEAR(Sales_Date) as syear,MONTH(Sales_Date) as smonth,Customer_ID,sum(Rev
 GROUP BY syear,smonth,Customer_ID);
 
 SELECT * FROM hive_metastore.dsai_sales_analysis.consolidated_sales where rev>=300 ;
-
--- COMMAND ----------
-
-
 
 -- COMMAND ----------
 
