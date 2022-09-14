@@ -275,7 +275,6 @@ COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE')
 
 CREATE OR REPLACE TABLE DSAI_loyalty_program(
 Loyalty_Program_ID varchar(50) Not Null,
-Customer_ID varchar(10) Not Null,
 Loyalty_Program_Name varchar(100) Not Null,
 Created_User String Not Null,
 Created_DT string Not Null,
@@ -285,6 +284,31 @@ Updated_DT string Not Null
 
 COPY INTO dsai_sales_analysis.dsai_loyalty_program
 FROM '/FileStore/dsai_sales_analysis/Loyalty_Program.csv'
+FILEFORMAT = CSV
+FORMAT_OPTIONS (
+  'HEADER' = 'TRUE'
+)
+COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE')
+
+
+-- COMMAND ----------
+
+-- MAGIC %md #DSAI_customer_loyalty_program
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TABLE DSAI_customer_loyalty_program(
+Loyalty_Program_ID varchar(50) Not Null,
+Customer_ID varchar(10) Not Null,
+Loyalty_Program_Name varchar(100) Not Null,
+Created_User String Not Null,
+Created_DT string Not Null,
+Updated_User String Not Null,
+Updated_DT string Not Null
+)USING DELTA;
+
+COPY INTO dsai_sales_analysis.dsai_loyalty_program
+FROM '/FileStore/dsai_sales_analysis/Customer_Loyalty_Program.csv'
 FILEFORMAT = CSV
 FORMAT_OPTIONS (
   'HEADER' = 'TRUE'
@@ -422,7 +446,7 @@ COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE')
 
 USE dsai_sales_analysis;
 CREATE OR REPLACE TABLE DSAI_data_source(
-Data_Source_ID Varchar(10) NOT NULL,
+Data_Source_ID STRING NOT NULL,
 Data_Source_Name string NOT NULL,
 Data_Source_Description string NOT NULL,
 Created_User String Not Null,
@@ -489,15 +513,19 @@ COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE');
 
 -- COMMAND ----------
 
+
+
+-- COMMAND ----------
+
 USE dsai_sales_analysis;
 CREATE OR REPLACE TABLE DSAI_competitor(
 Competitor_ID varchar(10) Not Null,
 Competitor_Name varchar(100) Not Null,
 Competitor_Office varchar(100) Not Null,
 Product_ID varchar(10) Not Null,
-Promotion string,
-SKU_ID string,
-Location string Not Null,
+Promotion string Not Null,
+SKU_ID string Not Null,
+Sales_Location string Not Null,
 Unit_Price string Not Null,
 Created_User String Not Null,
 Created_DT string Not Null,
