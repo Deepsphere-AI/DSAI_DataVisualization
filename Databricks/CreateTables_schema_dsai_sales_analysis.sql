@@ -3,6 +3,7 @@
 
 -- COMMAND ----------
 
+--managed Table
 USE dsai_sales_analysis;
 CREATE OR REPLACE TABLE DSAI_product_family(
 Product_Family_ID string Not NULL ,
@@ -27,31 +28,11 @@ select * from dsai_product_family;
 
 -- COMMAND ----------
 
--- External Table
-
-CREATE OR REPLACE TABLE DSAI_product_family_e(
-Product_Family_ID string Not NULL ,
-Product_Family_Name string NOT NULL
-)USING DELTA
-Location 's3://airline-data-bucket/external-storage/product_family.csv';
-
-COPY INTO dsai_sales_analysis.dsai_product_family_e
-FROM '/FileStore/dsai_sales_analysis/Product_Family.csv'
-FILEFORMAT = CSV
-FORMAT_OPTIONS (
-  'HEADER' = 'TRUE'
-)
-COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE');
-
-select * from dsai_product_family_e;
-
-
--- COMMAND ----------
-
 -- MAGIC %md #DSAI_product_group
 
 -- COMMAND ----------
 
+--Extended Table Storage in AWS
 USE dsai_sales_analysis;
 CREATE OR REPLACE TABLE DSAI_product_group(
 Product_Family_ID string NOT NULL,
@@ -61,7 +42,8 @@ Created_User String Not Null,
 Created_DT string Not Null,
 Updated_User String Not Null,
 Updated_DT string Not Null
-) USING DELTA;
+) USING DELTA
+Location 's3://airline-data-bucket/external-storage/product_group.csv';
 
 COPY INTO dsai_sales_analysis.dsai_product_group
 FROM '/FileStore/dsai_sales_analysis/Product_Group.csv'
@@ -74,24 +56,11 @@ COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE')
 
 -- COMMAND ----------
 
-CREATE OR REPLACE TABLE DSAI_product_group_e(
-Product_Family_ID string NOT NULL,
-Product_Group_ID string NOT NULL,
-Product_Group_Name string NOT NULL
-) USING DELTA
-Location 's3://airline-data-bucket/external-storage/product_group.csv'
-
-
--- COMMAND ----------
-
-describe extended DSAI_product_group_e
-
--- COMMAND ----------
-
 -- MAGIC %md #Dsai_unit_of_measure
 
 -- COMMAND ----------
 
+--Extended Table AWS
 CREATE OR REPLACE TABLE dsai_sales_analysis.DSAI_unit_of_measure(
 Unit_Of_Measure STRING NOT NULL,
 Unit_Description STRING NOT NULL,
@@ -99,9 +68,10 @@ Created_User STRING NOT NULL,
 Created_DT STRING NOT NULL,
 Updated_User STRING NOT NULL,
 Updated_DT STRING NOT NULL
-)USING DELTA;
+)USING DELTA 
+Location 's3://airline-data-bucket/external-storage/unit_of_measure.csv';
 
-COPY INTO dsai_sales_analysis.dsai_unit_of_measure
+COPY INTO dsai_sales_analysis.dSAI_unit_of_measure
 FROM '/FileStore/dsai_sales_analysis/UnitOfMeasurement.csv'
 FILEFORMAT = CSV
 FORMAT_OPTIONS (
@@ -115,6 +85,7 @@ COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE');
 
 -- COMMAND ----------
 
+--External Data Table in GCP
 USE dsai_sales_analysis;
 CREATE OR REPLACE TABLE DSAI_product(
 Product_Family_ID string Not Null,
@@ -126,7 +97,8 @@ Created_User String Not Null,
 Created_DT string Not Null,
 Updated_User String Not Null,
 Updated_DT string Not Null
-)USING DELTA;
+)USING DELTA
+Location 'gs://dsai-sales-analysis-gcp-bucket/external-storage/DSAI_Product.csv';
 
 COPY INTO dsai_sales_analysis.dsai_product
 FROM '/FileStore/dsai_sales_analysis/Product.csv'
@@ -147,6 +119,7 @@ select * from DSAI_product;
 -- COMMAND ----------
 
 USE dsai_sales_analysis;
+Drop table DSAI_SKU;
 CREATE OR REPLACE TABLE DSAI_SKU(
 Product_ID Varchar(10) NOT NULL,
 SKU_ID varchar(10) NOT NULL,
@@ -156,7 +129,8 @@ Created_User String Not Null,
 Created_DT string Not Null,
 Updated_User String Not Null,
 Updated_DT string Not Null
-)USING DELTA;
+)USING DELTA
+Location 'gs://dsai-sales-analysis-gcp-bucket/external-storage/DSAI_SKU.csv';
 
 COPY INTO dsai_sales_analysis.dsai_sku
 FROM '/FileStore/dsai_sales_analysis/SKU.csv'
@@ -422,6 +396,10 @@ COPY_OPTIONS ('FORCE'='TRUE','mergeSchema'='TRUE')
 
 USE dsai_sales_analysis;
 CREATE OR REPLACE TABLE DSAI_sales_location(
+Region_ID varchar(10) NOT NULL,
+Country_ID varchar(10) NOT NULL,
+State_ID varchar(10) NOT NULL,
+City_ID varchar(10) NOT NULL,
 Location_ID varchar(10) NOT NULL,
 Location_Name varchar(100) NOT NULL,
 Created_User String Not Null,
