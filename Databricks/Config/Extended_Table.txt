@@ -1,0 +1,10 @@
+/* To make GCP as a External Storage */
+
+Cluster -> Create/Edit -> Advanced Options -> Spark 
+spark.master local[*]
+spark.databricks.cluster.profile singleNode
+spark.hadoop.google.cloud.auth.service.account.enable true
+spark.hadoop.fs.gs.auth.service.account.email <client_email>
+spark.hadoop.fs.gs.project.id <project_id>
+spark.hadoop.fs.gs.auth.service.account.private.key <private_key>
+spark.hadoop.fs.gs.auth.service.account.private.key.id <private_key_id>
